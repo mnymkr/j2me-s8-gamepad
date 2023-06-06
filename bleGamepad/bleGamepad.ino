@@ -69,6 +69,9 @@ void setup()
     pinMode(EIGHT, INPUT_PULLUP);
     pinMode(NINE, INPUT_PULLUP);
 
+    int min = bleGamepadConfig.getAxesMin();
+    int max = bleGamepadConfig.getAxesMax();
+
     Serial.begin(115200);
     Serial.println("Starting BLE work!");
     bleGamepadConfig.setButtonCount(numOfButtons);
@@ -97,16 +100,16 @@ void loop()
     }
 
     if (digitalRead(RIGHT) == LOW) {
-      bleGamepad.release(BUTTON_47);
+      bleGamepad.press(BUTTON_19);
     } else {
-      bleGamepad.press(BUTTON_47);
+      bleGamepad.release(BUTTON_19);
 
     }
 
     if (digitalRead(DOWN) == LOW) {
-      bleGamepad.release(BUTTON_31);
+      bleGamepad.press(BUTTON_17);
     } else {
-      bleGamepad.press(BUTTON_31);
+      bleGamepad.release(BUTTON_17);
     }
 
     if (digitalRead(R) == LOW) {
