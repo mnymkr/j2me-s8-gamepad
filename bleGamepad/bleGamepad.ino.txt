@@ -1,0 +1,83 @@
+#include <Arduino.h>
+#include <BleGamepad.h>
+
+BleGamepad bleGamepad;
+BleGamepadConfiguration bleGamepadConfig;
+#define numOfButtons 64
+
+#define UP 16
+#define DOWN 0
+#define LEFT 4
+#define RIGHT 17
+#define L 2
+#define R 15
+#define STAR 13
+#define ZERO 26
+#define HASHTAG 19
+#define ONE 12
+#define TWO 25
+#define THREE 21
+#define FOUR 14
+#define FIVE 33
+#define SIX 5
+#define SEVEN 27
+#define EIGHT 22
+#define NINE 18
+
+#define numOfPhysicalButton 18
+
+byte buttonNum[numOfPhysicalButton] = {16,17,15,19,14,12,7,1,13,2,4,6,8,5,3,9,10,11};
+byte physicalButtonPin[numOfPhysicalButton] = {UP,DOWN,LEFT,RIGHT,L,R,STAR,ZERO,HASHTAG,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE};
+bool buttonState[numOfPhysicalButton] = {};
+
+
+void setup()
+{
+    pinMode(LEFT, INPUT_PULLUP);
+    pinMode(UP, INPUT_PULLUP);
+    pinMode(RIGHT, INPUT_PULLUP);
+    pinMode(R, INPUT_PULLUP);
+    pinMode(L, INPUT_PULLUP);
+    pinMode(DOWN, INPUT_PULLUP);
+    pinMode(STAR, INPUT_PULLUP);
+    pinMode(ZERO, INPUT_PULLUP);
+    pinMode(HASHTAG, INPUT_PULLUP);
+    pinMode(ONE, INPUT_PULLUP);
+    pinMode(TWO, INPUT_PULLUP);
+    pinMode(THREE, INPUT_PULLUP);
+    pinMode(FOUR, INPUT_PULLUP);
+    pinMode(FIVE, INPUT_PULLUP);
+    pinMode(SIX, INPUT_PULLUP);
+    pinMode(SEVEN, INPUT_PULLUP);
+    pinMode(EIGHT, INPUT_PULLUP);
+    pinMode(NINE, INPUT_PULLUP);
+
+    int min = bleGamepadConfig.getAxesMin();
+    int max = bleGamepadConfig.getAxesMax();
+
+    Serial.begin(115200);
+    Serial.println("Starting BLE work!");
+    bleGamepadConfig.setButtonCount(numOfButtons);
+    bleGamepadConfig.setControllerType(CONTROLLER_TYPE_GAMEPAD);
+    bleGamepadConfig.setWhichSpecialButtons(true, true, true, true, true, true, true, true);
+    bleGamepad.begin(&bleGamepadConfig);
+    // The default bleGamepad.begin() above enables 16 buttons, all axes, one hat, and no simulation controls or special buttons
+}
+
+void loop()
+{
+    if (bleGamepad.isConnected()) {
+
+      for (byte currentIndex = 0; currentIndex < numOfPhysicalButton; currentIndex++) {
+        buttonState[currentIndex] = digitalRead(physicalButtonPin[currentIndex]);
+      } // scan through all buttons first
+
+      for (byte currentIndex = 0; currentIndex < numOfPhysicalButton; currentIndex++) {
+        if (buttonState[currentIndex] == LOW) {
+          bleGamepad.press(buttonNum[currentIndex]);
+        } else {
+          bleGamepad.release(buttonNum[currentIndex]);
+        }
+      } // press button after all buttons state have been read
+    }
+}
